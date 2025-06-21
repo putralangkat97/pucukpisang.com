@@ -5,20 +5,21 @@ namespace App\Models;
 use App\Enums\Status;
 use Illuminate\Database\Eloquent\Model;
 
-class Document extends Model
+class Audio extends Model
 {
     protected $primaryKey = 'id';
     protected $keyType = 'string';
+    protected $table = 'audios';
     public $incrementing = false;
 
     protected $fillable = [
         'id',
         'status',
+        'source_type',
+        'source_path',
         'options',
-        'file',
-        'type',
         'ai_model',
-        'text_extraction',
+        'transcript',
         'summary',
         'translations',
         'error',

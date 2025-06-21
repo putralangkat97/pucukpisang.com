@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Document;
 
 use App\Abstracts\Document\AbstractAiServiceProvider;
 use App\Services\Document\AIServiceProvider;

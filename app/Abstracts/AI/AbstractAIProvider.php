@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Abstracts;
+namespace App\Abstracts\AI;
 
 abstract class AbstractAIProvider
 {

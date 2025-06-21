@@ -16,7 +16,7 @@ class DocumentApiController extends Controller
         $validated = $request->validated();
         $document = Document::create([
             'id' => Str::uuid(),
-            'status' => \App\Enums\Document\Status::PENDING,
+            'status' => \App\Enums\Status::PENDING,
             'options' => $validated['operations'],
             'file' => $validated['document_file']->store('documents'),
             'type' => strtolower($validated['document_file']->getClientOriginalExtension()),

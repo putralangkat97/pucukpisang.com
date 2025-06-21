@@ -2,30 +2,15 @@
 import AppLayout from '../../layouts/app-layout.vue';
 import FormDocument from '../../components/app/document/form-document.vue';
 
-const languages = [
-    { value: 'de', text: '🇩🇪 German' },
-    { value: 'es', text: '🇪🇸 Spanish' },
-    { value: 'zh', text: '🇨🇳 Chinese' },
-    { value: 'ja', text: '🇯🇵 Japanese' },
-    { value: 'id', text: '🇮🇩 Indonesian' },
-    { value: 'en', text: '🇬🇧 English' },
-];
-
-const summaryLengths = [
-    { value: 'short', text: 'Short (a few sentences)' },
-    { value: 'medium', text: 'Medium (a paragraph)' },
-    { value: 'long', text: 'Long (multiple paragraphs)' },
-];
-
-const aiModels = [
-    { value: 'gemini', text: '🤖 Google (Gemini)' },
-    { value: 'openai', text: '🧠 OpenAI (GPT)' },
-    { value: 'deepseek', text: '🔍 DeepSeek' },
-];
+const { ai_models, summary_length, languages } = defineProps({
+    ai_models: Array,
+    summary_length: Array,
+    languages: Array,
+});
 </script>
 
 <template>
     <AppLayout>
-        <FormDocument :aiModels="aiModels" :summaryLengths="summaryLengths" :languages="languages" />
+        <FormDocument :aiModels="ai_models" :summaryLengths="summary_length" :languages="languages" />
     </AppLayout>
 </template>

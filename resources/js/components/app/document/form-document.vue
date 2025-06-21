@@ -3,7 +3,7 @@ import { useForm } from '@inertiajs/vue3';
 import { computed, onUnmounted, ref } from 'vue';
 import Stepper from './stepper.vue';
 
-const props = defineProps({
+const {aiModels, summaryLengths, languages} = defineProps({
     aiModels: Array,
     summaryLengths: Array,
     languages: Array,
@@ -211,7 +211,7 @@ onUnmounted(() => {
                             </label>
                             <select v-model="form.summary_length" class="select select-bordered w-full mt-1">
                                 <option value="" selected disabled>Choose</option>
-                                <option v-for="len in props.summaryLengths" :key="len.value" :value="len.value">
+                                <option v-for="len in summaryLengths" :key="len.value" :value="len.value">
                                     {{ len.text }}
                                 </option>
                             </select>
@@ -222,7 +222,7 @@ onUnmounted(() => {
                             </label>
                             <select v-model="form.target_language" class="select select-bordered w-full mt-1">
                                 <option value="" disabled selected>choose</option>
-                                <option v-for="lang in props.languages" :key="lang.value" :value="lang.value">
+                                <option v-for="lang in languages" :key="lang.value" :value="lang.value">
                                     {{ lang.text }}
                                 </option>
                             </select>
@@ -235,7 +235,7 @@ onUnmounted(() => {
                         <div class="form-control w-full">
                             <select v-model="form.ai_model" class="select select-bordered w-full mt-1">
                                 <option value="" disabled selected>Choose</option>
-                                <option v-for="model in props.aiModels" :key="model.value" :value="model.value">
+                                <option v-for="model in aiModels" :key="model.value" :value="model.value">
                                     {{ model.text }}
                                 </option>
                             </select>
@@ -254,13 +254,8 @@ onUnmounted(() => {
             </div>
 
             <!-- stepper -->
-            <Stepper
-                v-else
-                :currentStep="currentStep"
-                :isProcessing="isProcessing"
-                :isFinished="isFinished"
-                :resultLink="resultLink"
-                :currentStatusMessage="currentStatusMessage"
+            <Stepper v-else :currentStep="currentStep" :isProcessing="isProcessing" :isFinished="isFinished"
+                :resultLink="resultLink" :currentStatusMessage="currentStatusMessage"
                 @reset-document-form="resetForm" />
         </div>
     </div>

@@ -3,7 +3,7 @@ import { router } from '@inertiajs/vue3';
 </script>
 
 <template>
-    <div class="hero min-h-screen bg-base-300 -mt-26">
+    <div class="hero min-h-screen bg-base-300 -mt-56">
         <div class="hero-content text-left">
             <div class="max-w-7xl">
                 <h1 class="text-7xl font-bold mb-2 text-primary">pucukpisang</h1>

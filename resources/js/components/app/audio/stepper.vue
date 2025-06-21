@@ -7,19 +7,23 @@ const props = defineProps({
     currentStatusMessage: String
 })
 
-const emit = defineEmits(['reset-document-form'])
+const emit = defineEmits(['reset-audio-form'])
 </script>
 
 <template>
     <div class="card w-full bg-base-200 shadow-xl p-8 text-center">
-        <h2 v-if="!isFinished" class="text-2xl text-info font-bold mb-6">Processing Document ...</h2>
+        <h2 v-if="!isFinished" class="text-2xl text-info font-bold mb-6">Processing Audio ...</h2>
         <ul class="steps steps-vertical lg:steps-horizontal w-full">
             <li class="step"
                 :class="{ 'step-success': isFinished, 'step-info': currentStep >= 0, 'step-error': currentStep === 99 }">
-                Extracting Text
+                Downloading audio
             </li>
             <li class="step"
-                :class="{ 'step-success': isFinished, 'step-info': currentStep >=6, 'step-error': currentStep === 99 }">
+                :class="{ 'step-success': isFinished, 'step-info': currentStep >= 5, 'step-error': currentStep === 99 }">
+                Transcribing audio
+            </li>
+            <li class="step"
+                :class="{ 'step-success': isFinished, 'step-info': currentStep >= 6, 'step-error': currentStep === 99 }">
                 Summarizing
             </li>
             <li class="step"
@@ -41,7 +45,7 @@ const emit = defineEmits(['reset-document-form'])
             <div v-if="isFinished" class="text-center">
                 <p class="text-lg font-bold text-success mb-4">Processing Complete!</p>
                 <a :href="resultLink" class="btn btn-success">
-                    View Your Document
+                    View Your Transcribe
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -56,12 +60,12 @@ const emit = defineEmits(['reset-document-form'])
         </div>
 
         <div class="mt-8 border-t border-base-content/10 pt-6">
-            <button @click="emit('reset-document-form')" :disabled="!isFinished" class="btn btn-soft btn-neutral btn-wide">
+            <button @click="emit('reset-audio-form')" :disabled="!isFinished" class="btn btn-soft btn-neutral btn-wide">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
                     viewBox="0 0 24 24" class="size-5">
                     <path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z" />
                 </svg>
-                Process Another Document
+                Process Another Audio
             </button>
         </div>
     </div>

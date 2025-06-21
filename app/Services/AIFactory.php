@@ -2,11 +2,14 @@
 
 namespace App\Services;
 
+use App\Abstracts\AI\AbstractAIProvider;
 use App\Services\Gemini;
+use App\Services\OpenAI;
+use App\Services\DeepSeek;
 
 class AIFactory
 {
-    public static function create(string $model)
+    public static function create(string $model): AbstractAIProvider
     {
         return match ($model) {
             'gemini' => new Gemini([

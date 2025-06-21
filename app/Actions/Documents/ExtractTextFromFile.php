@@ -2,8 +2,8 @@
 
 namespace App\Actions\Documents;
 
+use App\Enums\Status;
 use App\Models\Document;
-use App\Enums\Document\Status;
 use Closure;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -12,8 +12,11 @@ use thiagoalessio\TesseractOCR\TesseractOCR;
 
 class ExtractTextFromFile
 {
-    public function handle(Document $document, Closure $next)
+    public function handle(array $payload, Closure $next)
     {
+        /** @var Document $document */
+        $document = $payload['model'];
+
         try {
             $document->update(['status' => Status::EXTRACTING_DOCUMENT]);
             $full_path = Storage::disk('local')->path($document->file);
@@ -35,9 +38,11 @@ class ExtractTextFromFile
             $document->update(['text_extraction' => $text]);
         } catch (\Exception $e) {
             return $this->handleError($document, 'Text extraction failed: ' . $e->getMessage());
+            return;
         }
 
-        return $next($document);
+        $final_result = $next($payload);
+        return $final_result;
     }
 
     private function handleError(Document $document, string $errorMessage): void

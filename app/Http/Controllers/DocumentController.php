@@ -10,7 +10,32 @@ class DocumentController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('document/index');
+        $ai_models = [
+            ['value' => 'gemini', 'text' => '🤖 Google (Gemini)'],
+            ['value' => 'openai', 'text' => '🧠 OpenAI (GPT)'],
+            ['value' => 'deepseek', 'text' => '🔍 DeepSeek'],
+        ];
+
+        $summary_length = [
+            ['value' => 'short', 'text' => 'Short (a few sentences)'],
+            ['value' => 'medium', 'text' => 'Medium (a paragraph)'],
+            ['value' => 'long', 'text' => 'Long (multiple paragraphs)'],
+        ];
+
+        $languages = [
+            ['value' => 'de', 'text' => '🇩🇪 German'],
+            ['value' => 'es', 'text' => '🇪🇸 Spanish'],
+            ['value' => 'zh', 'text' => '🇨🇳 Chinese'],
+            ['value' => 'ja', 'text' => '🇯🇵 Japanese'],
+            ['value' => 'id', 'text' => '🇮🇩 Indonesian'],
+            ['value' => 'en', 'text' => '🇬🇧 English'],
+        ];
+
+        return Inertia::render('document/index', [
+            'ai_models' => $ai_models,
+            'summary_length' => $summary_length,
+            'languages' => $languages,
+        ]);
     }
 
     public function show(Document $document): Response

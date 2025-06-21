@@ -1,11 +1,72 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+@plugin "daisyui";
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+@plugin "daisyui/theme" {
+    name: "memerock";
+    default: true;
+    prefersdark: false;
+    color-scheme: "light";
+    --color-base-100: oklch(98% 0 0);
+    --color-base-200: oklch(97% 0 0);
+    --color-base-300: oklch(92% 0 0);
+    --color-base-content: oklch(21% 0.006 56.043);
+    --color-primary: oklch(84% 0.238 128.85);
+    --color-primary-content: oklch(27% 0.072 132.109);
+    --color-secondary: oklch(70% 0.165 254.624);
+    --color-secondary-content: oklch(28% 0.091 267.935);
+    --color-accent: oklch(83% 0.128 66.29);
+    --color-accent-content: oklch(26% 0.079 36.259);
+    --color-neutral: oklch(43% 0 0);
+    --color-neutral-content: oklch(98% 0 0);
+    --color-info: oklch(78% 0.154 211.53);
+    --color-info-content: oklch(30% 0.056 229.695);
+    --color-success: oklch(84% 0.143 164.978);
+    --color-success-content: oklch(26% 0.051 172.552);
+    --color-warning: oklch(85% 0.199 91.936);
+    --color-warning-content: oklch(28% 0.066 53.813);
+    --color-error: oklch(80% 0.114 19.571);
+    --color-error-content: oklch(25% 0.092 26.042);
+    --radius-selector: 1rem;
+    --radius-field: 1rem;
+    --radius-box: 2rem;
+    --size-selector: 0.28125rem;
+    --size-field: 0.3125rem;
+    --border: 1.5px;
+    --depth: 1;
+    --noise: 0;
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+@plugin "daisyui/theme" {
+    name: "coppermonkey";
+    default: false;
+    prefersdark: true;
+    color-scheme: "dark";
+    --color-base-100: oklch(26% 0 0);
+    --color-base-200: oklch(20% 0 0);
+    --color-base-300: oklch(14% 0 0);
+    --color-base-content: oklch(96% 0.007 247.896);
+    --color-primary: oklch(89% 0.196 126.665);
+    --color-primary-content: oklch(27% 0.072 132.109);
+    --color-secondary: oklch(70% 0.165 254.624);
+    --color-secondary-content: oklch(28% 0.091 267.935);
+    --color-accent: oklch(83% 0.128 66.29);
+    --color-accent-content: oklch(26% 0.079 36.259);
+    --color-neutral: oklch(43% 0 0);
+    --color-neutral-content: oklch(98% 0 0);
+    --color-info: oklch(86% 0.127 207.078);
+    --color-info-content: oklch(30% 0.056 229.695);
+    --color-success: oklch(84% 0.143 164.978);
+    --color-success-content: oklch(26% 0.051 172.552);
+    --color-warning: oklch(90% 0.182 98.111);
+    --color-warning-content: oklch(28% 0.066 53.813);
+    --color-error: oklch(80% 0.114 19.571);
+    --color-error-content: oklch(25% 0.092 26.042);
+    --radius-selector: 1rem;
+    --radius-field: 1rem;
+    --radius-box: 2rem;
+    --size-selector: 0.28125rem;
+    --size-field: 0.3125rem;
+    --border: 1.5px;
+    --depth: 1;
+    --noise: 0;
 }

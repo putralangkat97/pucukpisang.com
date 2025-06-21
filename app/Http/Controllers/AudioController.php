@@ -29,26 +29,24 @@ class AudioController extends Controller
             'ai_model' => 'required|in:openai,gemini,deepseek',
         ]);
 
-        $audioPath = null;
-        $cleanupPath = null;
+        $audio_path = null;
+        $cleanup_path = null;
 
         try {
-            // 2. Get Audio File Path (from Upload or YouTube)
+            // 2. get audio file path from upload/YouTube
             if ($request->input('source_type') === 'upload') {
-                $audioPath = $request->file('audio_file')->getPathname();
+                $audio_path = $request->file('audio_file')->getPathname();
             } else {
-                // Download from YouTube
+                // download from YouTube
                 $yt = new YoutubeDl();
-                // Create a temporary directory to store the downloaded audio
-                $downloadDir = storage_path('app/public/temp_audio');
-                File::makeDirectory($downloadDir, 0755, true, true);
-
-                $yt->setBinPath(env('YT_DLP_PATH')); // Set path if needed, e.g., for Windows
+                // create a temporary dir to store the downloaded audio
+                $download_dir = storage_path('app/public/temp_audio');
+                File::makeDirectory($download_dir, 0755, true, true);
 
                 $options = Options::create()
-                    ->downloadPath($downloadDir)
+                    ->downloadPath($download_dir)
                     ->extractAudio(true)
-                    ->ffmpegLocation(env('FFMPEG_PATH'))
+                    ->ffmpegLocation(env('FFMPEG_PATH')) // set ffmpeg path /opt/homebrew/bin/ffmpeg
                     ->audioFormat('mp3')
                     ->output('%(id)s.%(ext)s')
                     ->url($request->input('youtube_url'));
@@ -59,68 +57,68 @@ class AudioController extends Controller
                     if ($video->getError() !== null) {
                         return back()->withErrors(['youtube_url' => "Error downloading video: " . $video->getError()]);
                     }
-                    $audioPath = $video->getFile();
-                    $cleanupPath = $audioPath; // Mark this file for deletion later
-                    break; // Process first video only
+                    $audio_path = $video->getFile();
+                    $cleanup_path = $audio_path; // mark this file for deletion later
+                    break; // process the first video only
                 }
             }
 
-            if (!$audioPath) {
+            if (!$audio_path) {
                 return back()->withErrors(['audio_file' => "Could not get an audio file to process."]);
             }
 
-            // 3. Transcribe Audio using Whisper API
-            $driver = env('TRANSCRIPTION_DRIVER', 'api');
+            // 3. transcribe audio using local | whisper API muahal
+            $driver = env('AI_PROVIDER_STRATEGY', 'commercial_api');
             $transcript = '';
 
-            if ($driver === 'local') {
-                $transcript = $this->callWhisperLocally($audioPath);
+            if ($driver === 'local_cli') {
+                $transcript = $this->callWhisperLocally($audio_path);
             }
 
             if (Str::startsWith($transcript, 'Error:')) {
                 return back()->withErrors(['audio_file' => $transcript]);
             }
 
-            // 4. Perform subsequent operations (Summary, Translation)
+            // 4. perform subsequent operations summary then translate
             $results = ['transcript' => $transcript];
-            $totalTokens = 0;
-            $textForTranslation = $transcript; // By default, translate the full transcript
+            $total_tokens = 0;
+            $text_for_translation = $transcript; // by default, translate the full transcript
             $model = $request->input('ai_model');
 
             if (in_array('summarize', $request->input('operations'))) {
                 $length = $request->input('summary_length', 'medium');
                 $prompt = "Summarize the following transcript in a {$length} format:\n\n{$transcript}";
                 $ai_model = AIFactory::create($model);
-                $aiResponse = $ai_model->call($prompt);
+                $ai_response = $ai_model->call($prompt);
 
-                $results['summary'] = $aiResponse['text'];
-                $results['summary_tokens'] = $aiResponse['tokens'];
-                $totalTokens += $aiResponse['tokens'];
-                $textForTranslation = $results['summary']; // Update text for translation to be the summary
+                $results['summary'] = $ai_response['text'];
+                $results['summary_tokens'] = $ai_response['tokens'];
+                $total_tokens += $ai_response['tokens'];
+                $text_for_translation = $results['summary'];
             }
 
             if (in_array('translate', $request->input('operations'))) {
                 $language = $request->input('target_language', 'Spanish');
-                $prompt = "Translate the following text into {$language}:\n\n{$textForTranslation}";
+                $prompt = "Translate the following text into {$language}:\n\n{$text_for_translation}";
                 $ai_model = AIFactory::create($model);
-                $aiResponse = $ai_model->call($prompt);
+                $ai_response = $ai_model->call($prompt);
 
-                $results['translation'] = $aiResponse['text'];
-                $results['translation_tokens'] = $aiResponse['tokens'];
+                $results['translation'] = $ai_response['text'];
+                $results['translation_tokens'] = $ai_response['tokens'];
                 $results['language'] = $language;
-                $totalTokens += $aiResponse['tokens'];
+                $total_tokens += $ai_response['tokens'];
             }
 
-            $results['total_tokens'] = $totalTokens;
+            $results['total_tokens'] = $total_tokens;
 
             return view('audio.create', ['results' => $results]);
         } catch (\Exception $e) {
             Log::error('Audio processing failed: ' . $e->getMessage());
             return back()->withErrors(['audio_file' => 'An unexpected error occurred during processing. ' . $e->getMessage()]);
         } finally {
-            // Clean up downloaded YouTube file
-            if ($cleanupPath && File::exists($cleanupPath)) {
-                File::delete($cleanupPath);
+            // clean the downloaded youtube file
+            if ($cleanup_path && File::exists($cleanup_path)) {
+                File::delete($cleanup_path);
             }
         }
     }
@@ -135,8 +133,8 @@ class AudioController extends Controller
         }
 
         try {
-            // We use Laravel's Process facade to run the command securely
-            $result = Process::timeout(600) // 10 minute timeout
+            // 10 minute timeout
+            $result = Process::timeout(600)
                 ->run([
                     $executablePath,
                     '--model',
@@ -146,10 +144,8 @@ class AudioController extends Controller
                 ]);
 
             if ($result->successful()) {
-                // The transcription is the standard output of the command
                 return trim($result->output());
             } else {
-                // If it fails, log the error and return a friendly message
                 Log::error('Local Whisper Failed: ' . $result->errorOutput());
                 return 'Error: Local transcription failed. Check server logs for details.';
             }

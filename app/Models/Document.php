@@ -2,27 +2,30 @@
 
 namespace App\Models;
 
+use APp\Enums\Document\Status;
 use Illuminate\Database\Eloquent\Model;
 
 class Document extends Model
 {
+    protected $primaryKey = 'id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = [
-        'original_name',
-        'storage_path',
-        'file_type',
-        'pages',
+        'id',
         'status',
-        'operations',
-        'operation_params',
-        'result',
+        'options',
+        'file',
+        'type',
         'ai_model',
-        'token_usage',
-        'cost'
+        'text_extraction',
+        'summary',
+        'translations',
+        'error',
     ];
 
     protected $casts = [
-        'operations' => 'array',
-        'operation_params' => 'array',
-        'result' => 'array'
+        'options' => 'array',
+        'status' => Status::class,
     ];
 }

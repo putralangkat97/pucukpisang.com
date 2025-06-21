@@ -16,7 +16,14 @@ class Gemini extends AbstractAIProvider
             $url = $this->config['api_url'] . '?key=' . $this->config['api_key'];
 
             $response = Http::timeout(120)->post($url, [
-                'contents' => [['parts' => [['text' => $prompt]]]]
+                'contents' => [
+                    [
+                        'parts' =>
+                        [
+                            ['text' => $prompt]
+                        ]
+                    ]
+                ]
             ]);
 
             if ($response->failed()) {
@@ -31,7 +38,7 @@ class Gemini extends AbstractAIProvider
 
             // Gemini puts token usage in 'usageMetadata'
             return [
-                'text' => trim($text),
+                'text' => $text,
                 'tokens' => $response->json('usageMetadata.totalTokenCount') ?? 0
             ];
         } catch (\Exception $e) {

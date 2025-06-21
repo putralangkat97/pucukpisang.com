@@ -13,11 +13,12 @@ class OpenAI extends AbstractAIProvider
     public function call(string $prompt)
     {
         try {
-            $response = Http::withToken(env('OPENAI_API_KEY'))->timeout(120)->post(env('OPENAI_API_URL'), [
-                'model' => 'gpt-3.5-turbo',
-                'messages' => [['role' => 'user', 'content' => $prompt]],
-                'temperature' => 0.5,
-            ]);
+            $response = Http::withToken(env('OPENAI_API_KEY'))
+                ->timeout(120)->post(env('OPENAI_API_URL'), [
+                    'model' => 'gpt-3.5-turbo',
+                    'messages' => [['role' => 'user', 'content' => $prompt]],
+                    'temperature' => 0.5,
+                ]);
 
             if ($response->failed()) {
                 Log::error('OpenAI API Error: ' . $response->body());

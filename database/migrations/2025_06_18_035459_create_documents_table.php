@@ -12,18 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('documents', function (Blueprint $table) {
-            $table->id();
-            $table->string('original_name');
-            $table->string('storage_path');
-            $table->string('file_type');
-            $table->integer('pages')->default(1);
-            $table->string('status')->default('pending');
-            $table->json('operations');
-            $table->json('operation_params')->nullable();
-            $table->json('result')->nullable();
-            $table->string('ai_model')->default('deepseek');
-            $table->integer('token_usage')->default(0);
-            $table->decimal('cost', 10, 6)->default(0);
+            $table->uuid('id')->primary();
+            $table->integer('status')->default(0);
+            $table->json('options');
+            $table->string('file');
+            $table->string('type')->default('pdf');
+            $table->string('ai_model')->default('gemini');
+            $table->longText('text_extraction')->nullable();
+            $table->longText('summary')->nullable();
+            $table->longText('translations')->nullable();
+            $table->longText('error')->nullable();
             $table->timestamps();
         });
     }

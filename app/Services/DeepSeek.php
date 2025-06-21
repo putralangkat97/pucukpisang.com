@@ -13,11 +13,12 @@ class DeepSeek extends AbstractAIProvider
     public function call(string $prompt)
     {
         try {
-            $response = Http::withToken(env('DEEPSEEK_API_KEY'))->timeout(120)->post(env('DEEPSEEK_API_URL'), [
-                'model' => 'deepseek-chat',
-                'messages' => [['role' => 'user', 'content' => $prompt]],
-                'temperature' => 0.5,
-            ]);
+            $response = Http::withToken(env('DEEPSEEK_API_KEY'))
+                ->timeout(120)->post(env('DEEPSEEK_API_URL'), [
+                    'model' => 'deepseek-chat',
+                    'messages' => [['role' => 'user', 'content' => $prompt]],
+                    'temperature' => 0.5,
+                ]);
 
             if ($response->failed()) {
                 Log::error('DeepSeek API Error: ' . $response->body());

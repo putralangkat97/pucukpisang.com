@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreDocumentRequest; // We'll create this next
+use App\Http\Requests\StoreDocumentRequest;
 use App\Jobs\ProcessDocumentJob;
 use App\Models\Document;
 use Illuminate\Http\JsonResponse;

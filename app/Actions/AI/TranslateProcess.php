@@ -11,7 +11,7 @@ class TranslateProcess
 {
     public function handle(array $payload, \Closure $next)
     {
-        /** @var Model|\App\Models\Document|\App\Models\Audio $model */
+        /** @var Model|\App\Models\Document $model */
         $model = $payload['model'];
 
         if (!isset($model->options['translate'])) {

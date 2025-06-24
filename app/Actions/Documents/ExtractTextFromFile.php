@@ -39,13 +39,11 @@ class ExtractTextFromFile
             }
 
             $document->update(['text_extraction' => $text]);
-
-            Log::info("Deleting original file from R2: " . $document->file);
-            Storage::disk('r2')->delete($document->file);
         } catch (\Exception $e) {
             return $this->handleError($document, 'Text extraction failed: ' . $e->getMessage());
             return;
         } finally {
+            // delete the temporary file
             if ($temp_path_local_disk && Storage::disk('local')->exists($temp_path_local_disk)) {
                 Storage::disk('local')->delete($temp_path_local_disk);
             }

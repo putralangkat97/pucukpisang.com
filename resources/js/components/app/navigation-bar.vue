@@ -18,10 +18,6 @@ import { Link } from '@inertiajs/vue3';
                     <Link href="/document" class="btn"
                         :class="[$page.url.startsWith('/document') ? 'bg-primary text-primary-content' : 'btn-ghost text-base-content']">Document</Link>
                 </li>
-                <li class="mx-2">
-                    <Link href="/audio" class="btn"
-                        :class="[$page.url.startsWith('/audio') ? 'bg-primary text-primary-content' : 'btn-ghost text-base-content']">Audio</Link>
-                </li>
             </ul>
         </div>
         <div class="flex-none">

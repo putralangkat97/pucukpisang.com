@@ -15,16 +15,16 @@ const emit = defineEmits(['reset-document-form'])
         <h2 v-if="!isFinished" class="text-2xl text-info font-bold mb-6">Processing Document ...</h2>
         <ul class="steps steps-vertical lg:steps-horizontal w-full">
             <li class="step"
-                :class="{ 'step-success': isFinished, 'step-info': currentStep >= 0, 'step-error': currentStep === 99 }">
+                :class="{ 'step-success': isFinished, 'step-info': currentStep >= 1, 'step-error': currentStep === 99 }">
                 Extracting Text
             </li>
             <li class="step"
-                :class="{ 'step-success': isFinished, 'step-info': currentStep >=6, 'step-error': currentStep === 99 }">
-                Summarizing
+                :class="{ 'step-success': isFinished, 'step-info': currentStep >= 2, 'step-error': currentStep === 99 }">
+                Translating
             </li>
             <li class="step"
-                :class="{ 'step-success': isFinished, 'step-info': currentStep >= 7, 'step-error': currentStep === 99 }">
-                Translating
+                :class="{ 'step-success': isFinished, 'step-info': currentStep >= 3, 'step-error': currentStep === 99 }">
+                Summarizing
             </li>
             <li class="step"
                 :class="{ 'step-success': isFinished, 'step-info': currentStep === 98, 'step-error': currentStep === 99 }">

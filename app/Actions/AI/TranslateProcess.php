@@ -3,44 +3,44 @@
 namespace App\Actions\AI;
 
 use App\Enums\Status;
+use App\Models\Document;
 use App\Services\Document\AIModeFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 class TranslateProcess
 {
     public function handle(array $payload, \Closure $next)
     {
-        /** @var Model|\App\Models\Document $model */
-        $model = $payload['model'];
+        /** @var Document $document */
+        $document = $payload['model'];
 
-        if (!isset($model->options['translate'])) {
-            return $next($payload);
+        if (!isset($document->options['translate'])) {
+            return $next($document);
         }
 
         try {
-            $model->update(['status' => Status::PROCESSING_TRANSLATE]);
+            $document->update(['status' => Status::PROCESSING_TRANSLATE]);
 
-            $language = $model->options['translate']['language'] ?? 'en';
-            $text_to_summarize = $model->text_extraction ?? $model->transcript;
+            $language = $document->options['translate']['language'] ?? 'en';
             $mode = AIModeFactory::create();
             $response = $mode->translate(
-                $text_to_summarize,
+                $payload['text_for_ai'],
                 $language,
             );
+            $translated_text = $response['text'];
+            $document->update(['translations' => $translated_text]);
+            $payload['text_for_ai'] = $translated_text;
 
-            $model->update(['translations' => $response['text']]);
+            return $next($payload);
         } catch (\Exception $e) {
-            $this->handleError($payload['model'], 'Translation failed: ' . $e->getMessage());
+            $this->handleError($document['model'], 'Translation failed: ' . $e->getMessage());
             return;
         }
-
-        return $next($payload);
     }
 
-    private function handleError(Model $model, string $message): void
+    private function handleError(Document $document, string $error_message): void
     {
-        Log::error($message, ['doc_id' => $model->id]);
-        $model->update(['status' => Status::ERRORED, 'error' => $message]);
+        Log::error($error_message, ['doc_id' => $document->id]);
+        $document->update(['status' => Status::ERRORED, 'error' => $error_message]);
     }
 }

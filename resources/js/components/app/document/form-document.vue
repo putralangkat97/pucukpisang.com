@@ -82,7 +82,7 @@ const startProcessing = () => {
         .then((response) => {
             console.log('nunggu response', response)
             processId.value = response.data.id;
-            // poll();
+            poll();
             pollingInterval = setInterval(poll, 3000);
         })
         .catch(error => {

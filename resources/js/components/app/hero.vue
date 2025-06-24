@@ -1,15 +1,16 @@
 <script setup>
 import { router } from '@inertiajs/vue3';
+const appName = import.meta.env.VITE_APP_NAME || 'Hutalabs';
 </script>
 
 <template>
     <div class="hero min-h-screen bg-base-300 -mt-56">
         <div class="hero-content text-left">
             <div class="max-w-7xl">
-                <h1 class="text-7xl font-bold mb-2 text-primary">pucukpisang</h1>
+                <h1 class="text-7xl font-bold mb-2 text-primary">{{ appName }}</h1>
                 <h1 class="text-4xl font-bold"><span class="">AI</span> Tools For Saving Your Time</h1>
                 <p class="py-3">
-                    pucukpisang helps you translate, transcribe, and summarize content in seconds — no technical skills
+                    {{ appName }} helps you translate, transcribe, and summarize content in seconds — no technical skills
                     required.
                 </p>
                 <div class="flex gap-4 items-center justify-center mt-4">

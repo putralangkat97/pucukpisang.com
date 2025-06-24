@@ -23,16 +23,19 @@ class ProcessDocumentJob implements ShouldQueue
 
     public function handle(): void
     {
-        $payload = ['model' => $this->document];
+        $payload = [
+            'model' => $this->document
+        ];
+
         app(Pipeline::class)
             ->send($payload)->through([
                 ExtractTextFromFile::class,
-                SummaryProcess::class,
                 TranslateProcess::class,
+                SummaryProcess::class,
             ])->then(function (array $payload) {
-                $model = $payload['model'];
-                if ($model->status !== Status::ERRORED) {
-                    $model->update(['status' => Status::COMPLETE]);
+                $document = $payload['model'];
+                if ($document->status !== Status::ERRORED) {
+                    $document->update(['status' => Status::COMPLETE]);
                 }
             });
     }

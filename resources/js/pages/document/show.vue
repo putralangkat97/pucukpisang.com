@@ -46,7 +46,13 @@ const copyToClipboard = (text, type) => {
                         </div>
                         <p class="text-base-content/60 mb-4">
                             Processed with AI Model:
-                            <span class="font-mono badge badge-sm badge-neutral ml-2">{{ document.ai_model }}</span>
+                            <span class="font-mono badge badge-sm ml-2" :class="{
+                                'badge-secondary': document.ai_model === 'gemini',
+                                'badge-accent': document.ai_model === 'chatgpt',
+                                'badge-warning': document.ai_model === 'deepseek',
+                            }">
+                                {{ document.ai_model }}
+                            </span>
                         </p>
 
                         <!-- Summary Section -->

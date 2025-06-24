@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDocumentRequest;
 use App\Jobs\ProcessDocumentJob;
@@ -14,11 +15,12 @@ class DocumentApiController extends Controller
     public function store(StoreDocumentRequest $request): JsonResponse
     {
         $validated = $request->validated();
+        $default_disk = config('filesystems.default');
         $document = Document::create([
             'id' => Str::uuid(),
-            'status' => \App\Enums\Status::PENDING,
+            'status' => Status::PENDING,
             'options' => $validated['operations'],
-            'file' => $validated['document_file']->store('documents', 'r2'),
+            'file' => $validated['document_file']->store('documents', $default_disk),
             'type' => strtolower($validated['document_file']->getClientOriginalExtension()),
             'ai_model' => $validated['ai_model']
         ]);

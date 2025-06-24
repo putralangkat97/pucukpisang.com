@@ -3,42 +3,42 @@
 namespace App\Actions\AI;
 
 use App\Enums\Status;
+use App\Models\Document;
 use App\Services\Document\AIModeFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 class SummaryProcess
 {
     public function handle(array $payload, \Closure $next)
     {
-        /** @var Model|\App\Models\Document $model */
-        $model = $payload['model'];
+        /** @var Document $document */
+        $document = $payload['model'];
 
-        if (!isset($model->options['summarize'])) {
-            return $next($payload);
+        if (!isset($document->options['summarize'])) {
+            return $next($document);
         }
 
         try {
-            $model->update(['status' => Status::PROCESSING_SUMMARY]);
+            $document->update(['status' => Status::PROCESSING_SUMMARY]);
 
-            $text_to_summarize = $model->text_extraction ?? $model->transcript;
             $mode = AIModeFactory::create();
-            $response = $mode->summarize($text_to_summarize, $model->options['summarize']['length']);
-
-            $model->update(
-                ['summary' => $response['text']]
+            $response = $mode->summarize(
+                $payload['text_for_ai'],
+                $document->options['summarize']['length']
             );
+
+            $document->update(['summary' => $response['text']]);
+
+            return $next($payload);
         } catch (\Exception $e) {
-            $this->handleError($model, 'Summarization failed: ' . $e->getMessage());
+            $this->handleError($document, 'Summarization failed: ' . $e->getMessage());
             return;
         }
-
-        return $next($payload);
     }
 
-    private function handleError(Model $model, string $message): void
+    private function handleError(Document $document, string $error_message): void
     {
-        Log::error($message, ['doc_id' => $model->id]);
-        $model->update(['status' => Status::ERRORED, 'error' => $message]);
+        Log::error($error_message, ['doc_id' => $document->id]);
+        $document->update(['status' => Status::ERRORED, 'error' => $error_message]);
     }
 }

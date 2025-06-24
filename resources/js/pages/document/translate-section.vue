@@ -13,7 +13,12 @@ const emit = defineEmits(['copy-text'])
 
 <template>
     <details class="collapse collapse-arrow bg-base-100 border-base-300 border rounded-2xl" :open="isTranslationOpen">
-        <summary class="collapse-title font-semibold">Translate</summary>
+        <summary class="collapse-title font-semibold">
+            Translate
+            <span v-if="document?.options?.translate?.language" class="font-mono badge badge-sm badge-accent ml-2">
+                {{ document.options.translate.language }}
+            </span>
+        </summary>
         <div class="collapse-content relative">
             <div class="absolute right-12 -top-10 z-10">
                 <button @click.stop="emit('copy-text', document.translations, 'translation')" class="btn btn-xs btn-neutral/80 mr-4"

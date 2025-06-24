@@ -19,16 +19,19 @@ class ExtractTextFromFile
 
         try {
             $document->update(['status' => Status::EXTRACTING_DOCUMENT]);
-            $full_path = Storage::disk('local')->path($document->file);
 
-            if (!file_exists($full_path)) {
-                throw new \Exception("File does not exist at path: {$full_path}");
+            $r2_document_file = Storage::disk('r2')->get($document->file);
+            if ($r2_document_file === null) {
+                throw new \Exception("File '{$document->file}' not found in R2 bucket.");
             }
 
+            $temp_path_local_disk = 'temp_processing/' . uniqid('doc_', true) . '.' . $document->type;
+            Storage::disk('local')->put($temp_path_local_disk, $r2_document_file);
+            $temp_local_path = Storage::disk('local')->path($temp_path_local_disk);
+
             $text = match ($document->type) {
-                'pdf' => (new Pdf(env('PDFTOTEXT_PATH')))->setPdf($full_path)->text(),
-                'jpeg', 'jpg', 'png' => (new TesseractOCR($full_path))->executable(env('TESSERACT_PATH', 'tesseract'))->run(),
-                default => (new TesseractOCR($full_path))->executable(env('TESSERACT_PATH', 'tesseract'))->run(),
+                'pdf'   => (new Pdf(env('PDFTOTEXT_PATH')))->setPdf($temp_local_path)->text(),
+                default => (new TesseractOCR($temp_local_path))->executable(env('TESSERACT_PATH', 'tesseract'))->run(),
             };
 
             if (empty(trim($text))) {
@@ -36,9 +39,16 @@ class ExtractTextFromFile
             }
 
             $document->update(['text_extraction' => $text]);
+
+            Log::info("Deleting original file from R2: " . $document->file);
+            Storage::disk('r2')->delete($document->file);
         } catch (\Exception $e) {
             return $this->handleError($document, 'Text extraction failed: ' . $e->getMessage());
             return;
+        } finally {
+            if ($temp_path_local_disk && Storage::disk('local')->exists($temp_path_local_disk)) {
+                Storage::disk('local')->delete($temp_path_local_disk);
+            }
         }
 
         $final_result = $next($payload);

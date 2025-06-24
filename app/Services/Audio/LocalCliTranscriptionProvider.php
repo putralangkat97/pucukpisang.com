@@ -30,6 +30,6 @@ class LocalCliTranscriptionProvider extends AbstractAITranscribProvider
             throw new \Exception('Local whisper-cli process failed: ' . $result->errorOutput());
         }
 
-        return trim($result->output());
+        return $result->output();
     }
 }

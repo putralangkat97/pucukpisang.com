@@ -18,7 +18,7 @@ class DocumentApiController extends Controller
             'id' => Str::uuid(),
             'status' => \App\Enums\Status::PENDING,
             'options' => $validated['operations'],
-            'file' => $validated['document_file']->store('documents'),
+            'file' => $validated['document_file']->store('documents', 'r2'),
             'type' => strtolower($validated['document_file']->getClientOriginalExtension()),
             'ai_model' => $validated['ai_model']
         ]);

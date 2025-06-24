@@ -20,7 +20,14 @@ class GetAudioFile
         try {
             if ($audio->source_type === 'upload') {
                 // if the file is already existed, get the full path.
-                $local_path = Storage::disk('local')->path($audio->source_path);
+                $local_path = Storage::disk('r2')
+                    ->put(
+                        $audio->source_path,
+                        file_get_contents(
+                            public_path($audio->source_path)
+                        )
+                    );
+
                 if (!file_exists($local_path)) {
                     throw new \Exception("Uploaded file does not exist at path: {$local_path}");
                     return;
